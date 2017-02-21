@@ -1,0 +1,47 @@
+Miss100<-read.csv("100_account_without_email.csv")
+
+Miss100$url<-as.character(Miss100$url)
+
+for (i in 1:111){
+   if (startsWith(Miss100$url[i],"http://")){
+      Miss100$url[i]<-(strsplit(Miss100$url[i], split='/', fixed=TRUE))[[1]][3]
+   }
+}
+
+
+for (i in 1:111){
+  if (startsWith(Miss100$url[i],"https://")){
+    Miss100$url[i]<-(strsplit(Miss100$url[i], split='/', fixed=TRUE))[[1]][3]
+  }
+}
+
+
+for (i in 1:111){
+  if (startsWith(Miss100$url[i],"www.")){
+    Miss100$url[i]<-gsub("www.","",Miss100$url[i])
+  }
+}
+
+# matching the companies by domain
+sellhack<-read.csv("sellhack-list.csv")
+c<-merge(x=Miss100,y=sellhack,by.x="url",by.y="Domain")
+
+write.csv(c,"c.csv")
+
+
+#### Simplier code
+Miss100<-read.csv("100_account_without_email.csv")
+
+Miss100$url<-as.character(Miss100$url)
+
+substring<- "http|www"
+for (i in 1:length(Miss100$url)){
+  if (grepl(substring, Miss100$url[i])){
+    Miss100$url[i]<-sapply(strsplit(Miss100$url[i], "(//|/)(www[.])?"), "[", 2)
+  }
+}
+
+sellhack<-read.csv("sellhack-list.csv")
+c<-merge(x=Miss100,y=sellhack,by.x="url",by.y="Domain")
+
+write.csv(c,"c.csv")
